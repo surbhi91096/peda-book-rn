@@ -1,0 +1,1 @@
+export const SERVER_URL = 'http://psos.dissdemo.biz/User_api/';

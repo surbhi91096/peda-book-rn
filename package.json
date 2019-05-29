@@ -1,0 +1,45 @@
+{
+  "name": "pedabook",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "start": "node node_modules/react-native/local-cli/cli.js start",
+    "test": "jest"
+  },
+  "dependencies": {
+    "axios": "^0.18.0",
+    "moment": "^2.23.0",
+    "react": "^16.6.1",
+    "react-dom": "^16.6.3",
+    "react-lifecycles-compat": "^3.0.4",
+    "react-native": "0.57.7",
+    "react-native-add-calendar-event": "^2.3.0",
+    "react-native-datepicker": "^1.7.2",
+    "react-native-dimension": "^1.0.6",
+    "react-native-geolocation-service": "^2.0.0",
+    "react-native-gesture-handler": "^1.0.10",
+    "react-native-google-maps-directions": "^2.0.0",
+    "react-native-image-picker": "^0.28.0",
+    "react-native-lazyload": "^1.1.0",
+    "react-native-permissions": "^1.1.1",
+    "react-native-popup-dialog": "^0.16.6",
+    "react-native-simple-toast": "0.0.8",
+    "react-native-vector-icons": "^6.1.0",
+    "react-navigation": "^3.0.6",
+    "react-select-country-list": "^1.0.7"
+  },
+  "devDependencies": {
+    "babel-jest": "23.6.0",
+    "jest": "23.6.0",
+    "metro-react-native-babel-preset": "0.49.2",
+    "react-test-renderer": "16.6.1"
+  },
+  "jest": {
+    "preset": "react-native"
+  },
+  "rnpm": {
+    "assets": [
+      "./assets/fonts/"
+    ]
+  }
+}
