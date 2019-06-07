@@ -4,8 +4,10 @@ const MainStyles = StyleSheet.create({
     psosBtn:{
         paddingVertical:14,
         paddingHorizontal: 20,
-        borderRadius: 3,
-        backgroundColor:'#9e2d41'
+        borderRadius: 5,
+        backgroundColor:'rgba(153, 25, 48, 0.5)',
+        alignItems:'center',
+        justifyContent:'center',
     },
     psosBtnn:{
         paddingVertical:4,
@@ -79,8 +81,8 @@ const MainStyles = StyleSheet.create({
         backgroundColor:'#1476c0'
     },
     checkBoxLabel:{
-        color:'#676767',
-        fontSize:13,
+        color:'#FFFFFF',
+        fontSize:15,
         fontFamily:'AvenirLTStd-Medium'
     },
     tacItems:{

@@ -1,1 +1,1 @@
-export const SERVER_URL = 'http://psos.dissdemo.biz/User_api/';
+export const SERVER_URL = 'http://pedabook.webdesigninguk.co/api/';

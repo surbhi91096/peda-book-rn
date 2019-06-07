@@ -15,10 +15,7 @@ class SplashScreen extends Component{
     }
     render(){
         return (
-            <ImageBackground source={require('../assets/menu.png')} style={{flex:1,backgroundColor:'#FFFFFF'}}>
-               
-               
-               
+            <ImageBackground source={require('../assets/screen-bg.jpg')} style={{flex:1,alignItems:'center'}}>
             </ImageBackground>
         );
     }

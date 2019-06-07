@@ -48,7 +48,7 @@ const drawerLabelStyle = {
 };
 const Drawer = createDrawerNavigator({
     Home:{
-        screen:DashboardScreen
+        screen:Allitems
     }
 },
     {
@@ -149,7 +149,7 @@ const Navigation = createStackNavigator({
    
 }, {
     headerMode: 'none',
-    initialRouteName: 'Allitems',
+    initialRouteName: 'Splash',
     containerOptions: {
         style: {
             backgroundColor: '#147dbf',
