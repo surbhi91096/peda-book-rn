@@ -140,8 +140,6 @@ dependencies {
     compile project(':react-native-vector-icons')
     compile project(':react-native-image-picker')
     compile project(':react-native-gesture-handler')
-    compile project(':react-native-geolocation-service')
-    compile project(':react-native-add-calendar-event')
     compile "com.android.support:exifinterface:+"
     compile "com.android.support:support-annotations:+"
     compile "com.android.support:support-v4:+"

@@ -28,11 +28,8 @@ class Allitems extends Component {
                     </TouchableOpacity>
 
                     <Text style={{ fontFamily: 'AvenirLTStd-Roman', color: '#971a31', fontSize: 16 }}>Pedabook</Text>
-                    <TouchableOpacity>
-                    <Icon name="user" style={{
-                            fontSize:20,
-                            color:'#971a31'
-                        }} />
+                    <TouchableOpacity onPress={()=>{this.props.navigation.navigate('Profile');}}>
+                        <Image source={require('../assets/user.png')} style={{width:25,height:25}} />
                     </TouchableOpacity>
                 </View>
 

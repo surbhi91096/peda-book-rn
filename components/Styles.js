@@ -78,12 +78,14 @@ const MainStyles = StyleSheet.create({
     checkBoxCheckedStyle:{
         width:8,
         height:8,
-        backgroundColor:'#1476c0'
+        backgroundColor:'#f88937'
     },
     checkBoxLabel:{
         color:'#FFFFFF',
         fontSize:15,
-        fontFamily:'AvenirLTStd-Medium'
+        fontFamily:'AvenirLTStd-Medium',
+        alignItems:'center',
+        justifyContent:'center'
     },
     tacItems:{
         paddingVertical: 10,

@@ -1,5 +1,5 @@
 import React,{Component} from 'react';
-import {View,ImageBackground, Image,Text, StyleSheet } from 'react-native';
+import {View,ImageBackground, Image,Text, StyleSheet,AsyncStorage,BackHandler } from 'react-native';
 import Loader from './Loader';
 class SplashScreen extends Component{
     constructor(props) {
@@ -7,11 +7,33 @@ class SplashScreen extends Component{
         this.state={loading:false}
     }
     componentDidMount(){
-        const { navigation } = this.props;
+        this.props.navigation.addListener('willFocus',payload=>{
+            if((payload.context).search('Navigation/BACK_Root') != -1){
+                BackHandler.exitApp();
+            }
+        });
         setTimeout(()=>{
-            navigation.navigate('Login');
+            this.authenticateSession();
+            //navigation.navigate('Login');
         },2500)
-        
+        //
+    }
+    authenticateSession = async()=> {
+        const { navigation } = this.props;
+        let isUserLoggedIn = await AsyncStorage.getItem('isUserLoggedIn');
+        if(isUserLoggedIn == "true"){
+            let userDataStringfy = await AsyncStorage.getItem('userData');
+            let userData = JSON.parse(userDataStringfy);
+            if(userData){
+                navigation.navigate('Home');
+            }
+            else{
+                navigation.navigate('Login');
+            }
+        }
+        else{
+            navigation.navigate('Login');
+        }
     }
     render(){
         return (
