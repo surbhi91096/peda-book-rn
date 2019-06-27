@@ -1,23 +1,21 @@
 import React, { Component } from 'react';
 import { View, ImageBackground, Image, Text, StyleSheet, TextInput, 
-    Dimensions, ScrollView,KeyboardAvoidingView,Platform,
+    Dimensions, ScrollView,
     TouchableOpacity, SafeAreaView } from 'react-native';
 import MainStyles from './Styles';
-import { DrawerActions,NavigationActions } from 'react-navigation';
+import { DrawerActions,NavigationActions,withNavigation } from 'react-navigation';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { FlatList } from 'react-native-gesture-handler';
 import HeaderMenu from './Navigation/HeaderMenu';
-
 const { height, width } = Dimensions.get('window');
-class Allitems extends Component {
+class DownloadItems extends Component {
     constructor(props) {
         super(props);
         this.state = { loading: false,
             data:[{title:'Reader Manual 1',id:1},{title:'Reader 2',id:2},{title:'Manual 3',id:3}],
             renderedListData:[],
             searchOpened:false,
-            noFilterData:false,
-            
+            noFilterData:false
         }
     }
     componentDidMount() {
@@ -56,8 +54,7 @@ class Allitems extends Component {
         }
     }
     render() {
-        const RemoveHiehgt = height - 112;
-        
+        const RemoveHiehgt = height - 93;
         return (
             <SafeAreaView style={{ flex: 1, backgroundColor: '#f0f0f0' }}>
                 <HeaderMenu />
@@ -65,7 +62,7 @@ class Allitems extends Component {
                     <View style={{backgroundColor: '#c2cccd',height: 40,borderRadius: 5,marginVertical:10}}>
                         <View style={{flexDirection: 'row',justifyContent:'space-between',alignItems:'center',alignContent:'center',paddingHorizontal:10}}>
                             <View style={{justifyContent:'center',flex:1,height:'100%'}}>
-                                <Text style={{fontSize:18}}>All Items</Text>
+                                <Text style={{fontSize:18}}>Download Items</Text>
                             </View>
                             {
                                 this.state.searchOpened == true && 
@@ -92,7 +89,14 @@ class Allitems extends Component {
                                     underlineColorAndroid="transparent"
                                 />
                             }
-                            <TouchableOpacity style={{marginLeft:15}} onPress={()=>{this.setState({searchOpened:!this.state.searchOpened,renderedListData:[],noFilterData:false});setTimeout(()=>{if(this.searchInput){this.searchInput.focus();}},200);}}>
+                            <TouchableOpacity style={{marginLeft:15}} onPress={()=>{
+                                this.setState({searchOpened:!this.state.searchOpened,renderedListData:[],noFilterData:false});
+                                setTimeout(()=>{
+                                    if(this.searchInput){
+                                        this.searchInput.focus();
+                                    }
+                                },200);
+                            }}>
                                 <Image source={require('../assets/magnifier.png')} style={{width:20,height:20}} />
                             </TouchableOpacity>
                         </View>
@@ -146,7 +150,6 @@ class Allitems extends Component {
                             );
                         }}
                         keyExtractor={(item)=>'key-'+item.id}
-                        viewabilityConfig={this.viewabilityConfig}
                     />
                 }
                 {
@@ -157,9 +160,8 @@ class Allitems extends Component {
                 }
                 <View style={{justifyContent:'flex-end',flexDirection:'row',paddingHorizontal:20,paddingVertical:10,backgroundColor:'#FFFFFF'}}>
                     <Text style={{fontSize:11,marginRight:2}}>Powered By</Text> 
-                    <Text style={{color:'#971a31',fontSize:11}}>Pedabook</Text>
+                    <Text style={{color:'#971a31',fontSize:11}}>Pedabooks</Text>
                 </View>
-                
             </SafeAreaView>
         );
     }
@@ -167,4 +169,4 @@ class Allitems extends Component {
 const styles = StyleSheet.create({
 
 });
-export default Allitems;
+export default withNavigation(DownloadItems);

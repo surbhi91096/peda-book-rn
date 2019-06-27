@@ -18,6 +18,10 @@ import Logout from '../SignScreens/Logout';
 import Profile from'../Profile';
 import Profilesecond from'../Profilesecond';
 import Allitems from'../Allitems';
+import DownloadItems from'../DownloadItems';
+import Privacy from'../Privacy';
+import Terms from'../Terms';
+import AboutScreen from'../About';
 const drawerItemStyle = { 
     borderBottomWidth: 1, 
     borderBottomColor: '#147dbf', 
@@ -33,7 +37,11 @@ const drawerLabelStyle = {
 const Drawer = createDrawerNavigator({
     Home:{
         screen:Allitems
-    }
+    },
+    DownloadItemsM:{
+        screen:DownloadItems
+    },
+    
 },
     {
         initialRouteName: 'Home',
@@ -74,13 +82,22 @@ const Navigation = createStackNavigator({
     Allitems:{
         screen:Allitems
     },
+    About:{
+        screen:AboutScreen
+    },
+    Privacy:{
+        screen:Privacy
+    },
+    Terms:{
+        screen:Terms
+    },
     ForgotPassword:{
         screen:ForgotPassword
     }
    
 }, {
     headerMode: 'none',
-    initialRouteName: 'Login',
+    initialRouteName: 'Splash',
     containerOptions: {
         style: {
             backgroundColor: '#147dbf',

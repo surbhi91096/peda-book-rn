@@ -473,6 +473,7 @@ class LocumReg1Screen extends Component{
                         </TouchableOpacity>
                     </View>
                 </Dialog>
+                
             </SafeAreaView>
         );
     }

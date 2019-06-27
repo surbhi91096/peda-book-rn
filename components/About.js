@@ -1,7 +1,7 @@
 import React,{Component} from 'react';
-import {View,ImageBackground, Image,Text, StyleSheet, TouchableOpacity } from 'react-native';
-import Loader from './Loader';
+import {View,ImageBackground, Image,Text, StyleSheet,Dimensions,ScrollView, TouchableOpacity,SafeAreaView } from 'react-native';
 import MainStyles from './Styles';
+const { height, width } = Dimensions.get('window');
 class AboutScreen extends Component{
     constructor(props) {
         super(props);
@@ -10,33 +10,51 @@ class AboutScreen extends Component{
     componentDidMount(){
     }
     render(){
+        const RemoveHiehgt = height - 50;
         return (
-            <ImageBackground source={require('../assets/splash-bg.png')} style={{flex:1,backgroundColor:'#FFFFFF'}}>
-                <Loader loading={this.state.loading} />
+            <SafeAreaView style={{flex:1,backgroundColor:'#f0f0f0'}}>
                 <View style={MainStyles.navHeaderWrapper}>
-                    <TouchableOpacity onPress={()=>{this.props.navigation.goBack();}}>
-                        <Image source={require('../assets/back-icon.png')} style={{width:10,height:19}}/>
+                    <TouchableOpacity onPress={() => { this.props.navigation.goBack(); }} style={{ paddingHorizontal: 10 }}>
+                        <Image source={require('../assets/left-ar.png')} style={{ width: 10, height: 19 }} />
                     </TouchableOpacity>
-                    <Text style={{fontFamily:'AvenirLTStd-Roman',color:'#FFFFFF',fontSize:16}}>About</Text>
-                    <View style={{flexDirection:'row',alignItems:'center'}}>
-                        <TouchableOpacity>
-                        </TouchableOpacity>
-                    </View>
+                    <Text style={{ fontFamily: 'AvenirLTStd-Roman', color: '#403f41', fontSize: 16, paddingRight: 120 }}>About Us</Text>
                 </View>
-                <View style={{flex:1,justifyContent: 'center',alignItems:'center'}}>
-                    <Image source={require('../assets/web-logo.png')} style={{width:280,height:48}}/>
-                    <Text style={{color:'#676767',marginTop:40,flexWrap:'wrap',width:80,textAlign:'center'}}>Version 2.0.03</Text>
+                <ScrollView style={{height:RemoveHiehgt,flex:1}}>
+                <View style={{paddingVertical:15,backgroundColor:'#FFFFFF',marginTop:10,paddingHorizontal:10}}>
+                  <View style={{justifyContent: 'center'}}>
+                  <Text style={{fontFamily:'AvenirLTStd-Medium',fontSize:20,color:'#151515',marginTop:20,flexWrap:'wrap'}}>Lorem Ipsum has</Text>
+                  <Text style={{fontFamily:'AvenirLTStd-Medium',fontSize:16,color:'#757575',marginTop:20,flexWrap:'wrap',lineHeight:18}}>Lorem Ipsum is that it has a more-or-less normal distribution of letters ,as opposed to using 'Content here, content here',marking it look like redable English.</Text>
                 </View>
-                <View style={{position:'absolute',alignItems:'center',justifyContent:'center',width:'100%',bottom:20,flexDirection: 'row'}}>
-                    <Text style={{color:'#147dbf',fontFamily:'AvenirLTStd-Roman'}}>Terms &amp; Conditions</Text>
-                    <View style={{borderLeftColor:'#1d7bc3',borderLeftWidth:1,marginHorizontal:5}}><Text>&nbsp;</Text></View>
-                    <Text style={{color:'#147dbf',fontFamily:'AvenirLTStd-Roman'}}>Privacy &amp; Policy</Text>
+                <View style={{justifyContent: 'center'}}>
+                <Text style={{fontFamily:'AvenirLTStd-Medium',fontSize:16,color:'#757575',marginTop:20,flexWrap:'wrap',lineHeight:18}}>
+                  Lorem Ipsum is that it has a more-or-less normal distribution of letters ,as opposed to using 'Content here, content here',marking it look like redable English.Many desktop publishing packages and web page editors now use Lorem Ipsum as their deafault model text.</Text>
                 </View>
-            </ImageBackground>
+                <View style={{justifyContent: 'center'}}>
+                <Text style={{fontFamily:'AvenirLTStd-Medium',fontSize:16,color:'#757575',marginTop:20,flexWrap:'wrap',lineHeight:18}}>
+                  Lorem Ipsum is that it has a more-or-less normal distribution of letters ,as opposed to using 'Content here, content here',marking it look like redable English.</Text>
+                </View>
+            </View>
+               <View style={{paddingVertical:15,backgroundColor:'#FFFFFF',marginTop:10,paddingHorizontal:10}}>
+                  <View style={{justifyContent: 'center'}}>
+                  <Text style={{fontFamily:'AvenirLTStd-Medium',fontSize:20,color:'#151515',marginTop:20,flexWrap:'wrap'}}>Lorem Ipsum has</Text>
+                  <Text style={{fontFamily:'AvenirLTStd-Medium',fontSize:16,color:'#757575',marginTop:20,flexWrap:'wrap',lineHeight:18}}>Lorem Ipsum is that it has a more-or-less normal distribution of letters ,as opposed to using 'Content here, content here',marking it look like redable English.</Text>
+                </View>
+                <View style={{justifyContent: 'center'}}>
+                <Text style={{fontFamily:'AvenirLTStd-Medium',fontSize:16,color:'#757575',marginTop:20,flexWrap:'wrap',lineHeight:18}}>
+                  Lorem Ipsum is that it has a more-or-less normal distribution of letters ,as opposed to using 'Content here, content here',marking it look like redable English.Many desktop publishing packages and web page editors now use Lorem Ipsum as their deafault model text.</Text>
+                </View>
+                <View style={{justifyContent: 'center'}}>
+                <Text style={{fontFamily:'AvenirLTStd-Medium',fontSize:16,color:'#757575',marginTop:20,flexWrap:'wrap',lineHeight:18}}>
+                  Lorem Ipsum is that it has a more-or-less normal 
+                  distribution of letters ,as opposed to using 'Content here,
+                 content here',marking it look like redable English.Many desktop publishing packages
+                  and web page editors now use Lorem Ipsum as their deafault model text.</Text>
+                </View>
+                </View>  
+            </ScrollView>
+        </SafeAreaView>
         );
     }
 }
-const styles = StyleSheet.create({
-
-});
+const styles = StyleSheet.create({});
 export default AboutScreen;

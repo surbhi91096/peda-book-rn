@@ -30,14 +30,26 @@ class DrawerBody extends Component{
         return (
             <SafeAreaView>
                 <ScrollView style={{padding:0,marginTop:20}}>
-                    <TouchableOpacity style={styles.DIS} onPress={()=>this.navigateToScreen('Profile')}>
+                    <TouchableOpacity style={styles.DIS} onPress={()=>this.navigateToScreen('Home')}>
                         <Image source={require('../../assets/d-book-icon.png')} style={{width:15,height:14}} />
                         <Text style={styles.DITS}>Show All Items</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.DIS} onPress={()=>this.navigateToScreen('Profile')}>
+                    <TouchableOpacity style={styles.DIS} onPress={()=>this.navigateToScreen('DownloadItemsM')}>
                         <Image source={require('../../assets/d-cloud-icon.png')} style={{width:15,height:15}} />
                         <Text style={styles.DITS}>Show Downloaded</Text>
                     </TouchableOpacity>
+                    {/* <TouchableOpacity style={styles.DIS} onPress={()=>this.navigateToScreen('About')}>
+                        <Image source={require('../../assets/d-cloud-icon.png')} style={{width:15,height:15}} />
+                        <Text style={styles.DITS}>About Us</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.DIS} onPress={()=>this.navigateToScreen('Privacy')}>
+                        <Image source={require('../../assets/d-cloud-icon.png')} style={{width:15,height:15}} />
+                        <Text style={styles.DITS}>Privacy Policy</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.DIS} onPress={()=>this.navigateToScreen('Terms')}>
+                        <Image source={require('../../assets/d-cloud-icon.png')} style={{width:15,height:15}} />
+                        <Text style={styles.DITS}>Terms &amp; Conditions</Text>
+                    </TouchableOpacity> */}
                     <TouchableOpacity style={styles.DIS} onPress={()=>this.navigateToScreen('Logout')}>
                         <Image source={require('../../assets/logout-d-icon.png')} style={{width:15,height:15}} />
                         <Text style={styles.DITS}>Logout</Text>

@@ -123,7 +123,6 @@ class Profile extends Component {
           });
     }
     render() {
-
         const RemoveHiehgt = height - 50;
         return (
 
@@ -138,7 +137,7 @@ class Profile extends Component {
 
                 </View>
 
-                <ScrollView keyboardShouldPersistTaps="always">
+                <ScrollView keyboardShouldPersistTaps="always" style={{paddingBottom:10}}>
 
                     <View style={{ backgroundColor: '#ededee', paddingHorizontal: 10, alignItems: 'center' }}>
                         <View style={{ paddingVertical: 20,marginTop:20,borderRadius:100,overflow:'hidden',width:100,height:100,justifyContent:'center',alignItems:'center' }}>
@@ -147,7 +146,7 @@ class Profile extends Component {
                         <TouchableOpacity onPress={()=>{
                             this.pickFile();
                         }}>
-                            <Text style={{ fontFamily: 'AvenirLTStd-Meduim', color: '#971a31', fontSize: 17, }}>Change Profile Picture</Text>
+                            <Text style={{ color: '#971a31', fontSize: 17, }}>Change Profile Picture</Text>
                         </TouchableOpacity>
                     </View>
                     <View style={{
@@ -167,7 +166,7 @@ class Profile extends Component {
 
                         <View style={{ flexDirection: 'row',width:'100%',justifyContent:'space-around',alignItems:'center' }}>
 
-                            <View style={{ width: '75%', paddingVertical: 0, marginHorizontal: 15, }}>
+                            <View style={{ width: '75%', paddingVertical: 0, marginHorizontal: 15,alignItems:'center',justifyContent:'center' }}>
                                 {
                                     this.state.isEditing == false &&
                                     <Text style={{
@@ -179,6 +178,8 @@ class Profile extends Component {
                                         fontFamily: 'AvenirLTStd-Medium',
                                         borderRadius: 2,
                                         borderWidth: 2,
+                                        width:'100%',
+                                        lineHeight:50,
                                         borderColor: '#595453',
                                         paddingHorizontal: 12,
                                     }}>{this.state.Name}</Text>
@@ -196,9 +197,10 @@ class Profile extends Component {
                                             borderWidth: 2,
                                             borderColor: '#971a31',
                                             paddingHorizontal: 12,
+                                            width:'100%'
                                         }}
                                         placeholder="Name"
-                                        returnKeyType={"none"}
+                                        returnKeyType={"default"}
                                         ref={(input) => { this.name = input; }}
                                         blurOnSubmit={false}
                                         onChangeText={(text) => this.setState({ Name: text })}
@@ -242,10 +244,13 @@ class Profile extends Component {
                             <Text style={{
                                 color: '#889292',
                             }}>Email ID :</Text>
-                            <Text style={{
-                                color: '#971a31',
-                                paddingLeft: 5,
-                            }}>demouser@pedbook.com</Text>
+                            {
+                                this.state.userData && 
+                                <Text style={{
+                                    color: '#971a31',
+                                    paddingLeft: 5,
+                                }}>{this.state.userData.Email}</Text>
+                            }
                         </View>
                         <View>
                             <Image source={require('../assets/dashed-b-s.png')} width={20} height={30} style={{ width: '100%', height: 1, }} />
@@ -287,7 +292,6 @@ class Profile extends Component {
                                     textAlign: 'center',
                                     fontSize: 18,
                                     color: '#5a6565',
-                                    fontFamily: 'AvenirLTStd-Meduim',
                                 }}>Reset Password</Text>
                                 <View style={{flex: 1,marginVertical: 10}}></View>
                                 <View style={{paddingVertical: 0,marginHorizontal: 15}} >
@@ -481,7 +485,7 @@ class Profile extends Component {
                             flex: 1,
 
                         }}>
-                            <TouchableOpacity>
+                            <TouchableOpacity onPress={()=>{this.props.navigation.navigate('About')}}>
                                 <Text style={{
                                     textAlign: 'center',
                                     fontSize: 16,
@@ -501,7 +505,7 @@ class Profile extends Component {
                             <View style={{
                                 paddingHorizontal: 25,
                             }}>
-                                <TouchableOpacity>
+                                <TouchableOpacity onPress={()=>{this.props.navigation.navigate('Privacy')}}>
                                     <Text style={{
                                         textAlign: 'center',
                                         fontSize: 16,
@@ -516,14 +520,14 @@ class Profile extends Component {
                                 borderRightColor: '#999999',
                             }}></View>
                             <View style={{ paddingHorizontal: 25, }}>
-                                <TouchableOpacity>
+                                <TouchableOpacity onPress={()=>{this.props.navigation.navigate('Terms')}}>
                                     <Text style={{
                                         textAlign: 'center',
                                         fontSize: 16,
                                         fontFamily: 'AvenirLTStd-Medium',
                                         textDecorationLine: 'underline',
                                         color: '#232323',
-                                    }}>Terms & Conditions</Text>
+                                    }}>Terms &amp; Conditions</Text>
                                 </TouchableOpacity>
                             </View>
 
@@ -562,68 +566,18 @@ class Profile extends Component {
                                 }}>Sign Out</Text>
                             </TouchableOpacity>
                         </View>
-                        <View style={{
-
-                            textAlign: 'right',
-                            marginBottom: 15,
-                            paddingHorizontal: 10,
-                            marginTop: 10,
-                            alignItems: 'flex-end',
-                        }}>
-                            <View style={{
-                                flexDirection: "row",
-                            }}>
-                                <Text>Powered by </Text>
-                                <Text style={{
-                                    color: '#971a31',
-                                }}>Pedabook</Text>
-                            </View>
-
-                        </View>
 
 
                     </View>
 
 
                     <View>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
                     </View>
-
-
-
                 </ScrollView>
-
-
+                <View style={{justifyContent:'flex-end',flexDirection:'row',paddingHorizontal:20,paddingVertical:10,backgroundColor:'#FFFFFF'}}>
+                    <Text style={{fontSize:11,marginRight:2}}>Powered By</Text> 
+                    <Text style={{color:'#971a31',fontSize:11}}>Pedabook</Text>
+                </View>
 
             </SafeAreaView>
         );

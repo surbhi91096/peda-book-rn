@@ -73,6 +73,7 @@ export default class Login extends Component {
                 Name: this.state.name,
                 Username: this.state.username,
                 Email: this.state.email,
+                PhoneCode:this.state.mobileCode,
                 ContactNo: this.state.contact,
                 Password: this.state.password,
             })

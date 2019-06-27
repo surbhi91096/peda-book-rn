@@ -8,6 +8,7 @@ import Loader from '../Loader';
 import MainStyles from '../Styles';
 import Toast from 'react-native-simple-toast';
 import { SERVER_URL } from '../../Constants';
+import PhoneInput from 'react-native-phone-input';
 import { ScrollView } from 'react-native-gesture-handler';
 export default class ForgotPassword extends Component {
     constructor(props) {
@@ -18,7 +19,10 @@ export default class ForgotPassword extends Component {
             changePassField:false,
             mobileNumber: '',
             newPassword: '',
-            cPass:''
+            cPass:'',
+            mobileCode:'+961',
+            showPass:false,
+            showCPass:false
         }
     }
     checkMobile = ()=>{
@@ -30,6 +34,7 @@ export default class ForgotPassword extends Component {
         this.setState({loading:true});
         var fd = new FormData();
         fd.append('ContactNo',this.state.mobileNumber);
+        fd.append('PhoneCode',this.state.mobileCode);
         fetch(SERVER_URL+'user_forgot_password',
         {
             method:'POST',
@@ -109,30 +114,62 @@ export default class ForgotPassword extends Component {
         })
     }
     render() {
+        var showPassWord = (this.state.showPass == false)?true:false;
+        var showCPassWord = (this.state.showCPass == false)?true:false;
         var behavoir = (Platform.OS == 'ios')?'padding':'';
         return (
             <ImageBackground source={require('../../assets/l-bg.jpg')} style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
                 <Loader loading={this.state.loading} />
                 <KeyboardAvoidingView style={{ flex: 1, paddingVertical: 25, alignItems: 'center' }} behavior={behavoir}>
                     <ScrollView keyboardShouldPersistTaps="always" contentContainerStyle={{flex:1,justifyContent: 'center', alignItems: 'center',width:'100%'}} style={{ flex: 1, width: '100%', paddingHorizontal: 15, }}>
-                        <Image source={require('../../assets/pb-logo.png')} style={{ width: 280, height: 48,marginBottom:15 }} />
+                        <Image source={require('../../assets/pb-logo.png')} style={{ width: 200, height: 35,marginBottom:15 }} />
+                        <TouchableOpacity onPress={()=>{this.props.navigation.goBack();}} style={{position:'absolute',left:8,top:0,paddingLeft:10,paddingRight:15,paddingVertical:15,}}>
+                            <Image source={require('../../assets/back-icon.png')} style={{width:10,height:19}}/>
+                        </TouchableOpacity>
                         <View style={{marginVertical:20}}></View>
                         <View style={{ paddingHorizontal: 20, width: '100%',justifyContent:'center',alignItems:'center',flex:1}}>
                             {
                                 this.state.isOtpField == false && this.state.changePassField == false && 
-                                <View style={{ width: '100%', marginBottom: 22.5, justifyContent: 'flex-start', alignItems: 'center' }}>
-                                    <TextInput
-                                        style={styles.TextInputStyle}
-                                        returnKeyType={"next"}
-                                        blurOnSubmit={false}
-                                        onChangeText={(text) => this.setState({ mobileNumber: text })}
-                                        keyboardType="phone-pad"
-                                        autoCapitalize='none'
-                                        placeholderTextColor="#FFFFFF"
-                                        underlineColorAndroid="transparent"
-                                        value={this.state.mobileNumber}
-                                        placeholder="Mobile Number"
-                                    />
+                                <View style={{ width: '100%', marginBottom: 22.5, justifyContent: 'flex-start', alignItems: 'center'}}>
+                                    <View style={{width: '100%',flexDirection: 'row',marginBottom: 22.5,justifyContent: 'center',alignItems: 'center',}}>
+                                        <PhoneInput
+                                        ref={(ref) => { this.mobileCode = ref; }}
+                                        style={{
+                                            textAlign: 'left',
+                                            height: 50,
+                                            fontSize: 17,
+                                            backgroundColor: 'rgba(255,255,255,0.5)',
+                                            borderTopLeftRadius:12,
+                                            borderBottomLeftRadius:12,
+                                            color: '#FFFFFF',
+                                            paddingLeft:12,
+                                            width:92
+                                        }} 
+                                        textStyle={{color:'#FFFFFF',fontSize:17}}
+                                        contentContainerStyle={{color:'#FFFFFF'}}
+                                        initialCountry={"au"}
+                                        onChangePhoneNumber={(number)=>this.setState({mobileCode:number})}
+                                        value={this.state.mobileCode}
+                                        editable={false}
+                                        />
+                                        <TextInput
+                                            style={[styles.TextInput,{
+                                                borderTopLeftRadius:0,
+                                                borderBottomLeftRadius:0,
+                                                paddingLeft:0,
+                                                textAlign:'left'
+                                            }]}
+                                            placeholder="Mobile Number"
+                                            returnKeyType={"go"}
+                                            blurOnSubmit={false}
+                                            onChangeText={(text) => this.setState({ mobileNumber: text })}
+                                            keyboardType="number-pad"
+                                            autoCapitalize='none'
+                                            placeholderTextColor="#ffffff"
+                                            underlineColorAndroid="transparent"
+                                            value={this.state.mobileNumber}
+                                        />
+                                    </View>
                                     <TouchableOpacity style={[MainStyles.psosBtn,{marginTop:30}]} onPress={() => {console.log('Pressing'); this.checkMobile() }}>
                                         <Text style={MainStyles.psosBtnText}>Submit</Text>
                                     </TouchableOpacity>
@@ -161,43 +198,61 @@ export default class ForgotPassword extends Component {
                             {
                                 this.state.isOtpField == false && this.state.changePassField == true && 
                                 <View style={{ width: '100%', marginBottom: 22.5, justifyContent: 'flex-start', alignItems: 'center' }}>
-                                    <TextInput
-                                        style={styles.TextInputStyle}
-                                        returnKeyType={"next"}
-                                        blurOnSubmit={false}
-                                        onChangeText={(text) => this.setState({ newPassword: text })}
-                                        keyboardType="name-phone-pad"
-                                        autoCapitalize='none'
-                                        placeholderTextColor="#FFFFFF"
-                                        underlineColorAndroid="transparent"
-                                        value={this.state.newPassword}
-                                        placeholder="New Password"
-                                    />
-                                    <TextInput
-                                        style={[styles.TextInputStyle,{marginTop:20}]}
-                                        returnKeyType={"next"}
-                                        blurOnSubmit={false}
-                                        onChangeText={(text) => this.setState({ cPass: text })}
-                                        keyboardType="name-phone-pad"
-                                        autoCapitalize='none'
-                                        placeholderTextColor="#FFFFFF"
-                                        underlineColorAndroid="transparent"
-                                        value={this.state.cPass}
-                                        placeholder="Confirm Password"
-                                    />
+                                    <View style={{width: '100%',flexDirection: 'row',marginBottom: 22.5,justifyContent: 'center',alignItems: 'center',}}>
+                                        <TextInput
+                                            style={styles.TextInput}
+                                            returnKeyType={"next"}
+                                            blurOnSubmit={false}
+                                            onChangeText={(text) => this.setState({ newPassword: text })}
+                                            keyboardType="name-phone-pad"
+                                            autoCapitalize='none'
+                                            secureTextEntry={showPassWord}
+                                            placeholderTextColor="#FFFFFF"
+                                            underlineColorAndroid="transparent"
+                                            value={this.state.newPassword}
+                                            placeholder="New Password"
+                                        />
+                                        <TouchableOpacity style={{position: 'absolute',right: 15}} onPress={()=>{
+                                            if(this.state.showPass){this.setState({showPass:false});}
+                                            else{this.setState({showPass:true});}
+                                        }}>
+                                            <Image source={require('../../assets/eye.png')} style={{ width: 30, height: 16, }} />
+                                        </TouchableOpacity>
+                                    </View>
+                                    <View style={{width: '100%',flexDirection: 'row',marginBottom: 22.5,justifyContent: 'center',alignItems: 'center'}}>
+                                        <TextInput
+                                            style={[styles.TextInput]}
+                                            returnKeyType={"next"}
+                                            blurOnSubmit={false}
+                                            onChangeText={(text) => this.setState({ cPass: text })}
+                                            keyboardType="name-phone-pad"
+                                            autoCapitalize='none'
+                                            secureTextEntry={showCPassWord}
+                                            placeholderTextColor="#FFFFFF"
+                                            underlineColorAndroid="transparent"
+                                            value={this.state.cPass}
+                                            placeholder="Confirm Password"
+                                        />
+                                        <TouchableOpacity style={{position: 'absolute',right: 15}} onPress={()=>{
+                                            if(this.state.showCPass){this.setState({showCPass:false});}
+                                            else{this.setState({showCPass:true});}
+                                        }}>
+                                            <Image source={require('../../assets/eye.png')} style={{ width: 30, height: 16, }} />
+                                        </TouchableOpacity>
+                                    </View>
                                     <TouchableOpacity style={[MainStyles.psosBtn,{marginTop:30}]} onPress={() => { this.resetPass() }}>
                                         <Text style={MainStyles.psosBtnText}>Reset Password</Text>
                                     </TouchableOpacity>
                                 </View>
                             }
-                            <View style={{ width: '100%', alignItems: 'center', marginTop: 15 }}>
-                                <TouchableOpacity onPress={() => {this.props.navigation.navigate('Login')}}>
+                            <View style={{ width: '100%', alignItems: 'center'}}>
+                                {/* <TouchableOpacity onPress={() => {this.props.navigation.navigate('Login')}}>
                                     <Text style={{
                                         color: '#f88937',
                                         fontSize:17,
                                         fontFamily: 'AvenirLTStd-Roman'
                                     }}>Login</Text>
-                                </TouchableOpacity>
+                                </TouchableOpacity> */}
                             </View>
                             <View style={{alignItems: 'center',width:'100%',justifyContent:'center',marginTop:35}}>
                             </View>
@@ -220,7 +275,18 @@ const styles = StyleSheet.create({
         color: '#FFFFFF',
         fontSize: 17
     },
-    TextInputStyle: {
+    TextInput: {
+        flex: 1,
+        textAlign: 'left',
+        paddingLeft: 10,
+        height: 50,
+        fontSize: 17,
+        backgroundColor: 'rgba(255,255,255,0.5)',
+        borderRadius: 12,
+        paddingHorizontal: 12,
+        color: '#ffffff',
+    },
+    TextInputStyle:{
         width:'100%',
         textAlign: 'left',
         paddingVertical: 10,
