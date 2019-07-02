@@ -42,25 +42,27 @@
 	<false/>
 	<key>NSAppTransportSecurity</key>
 	<dict>
-		<key>NSAllowsArbitraryLoads</key>
-		<true/>
 		<key>NSExceptionDomains</key>
 		<dict>
-			<key>localhost</key>
+			<key>yourserver.com</key>
 			<dict>
-				<key>NSExceptionAllowsInsecureHTTPLoads</key>
+				<key>NSIncludesSubdomains</key>
 				<true/>
+				<key>NSTemporaryExceptionAllowsInsecureHTTPLoads</key>
+				<true/>
+				<key>NSTemporaryExceptionMinimumTLSVersion</key>
+				<string>TLSv1.1</string>
 			</dict>
 		</dict>
 	</dict>
 	<key>NSPhotoLibraryUsageDescription</key>
-    <string>Pedabook would like access to your photo gallery</string>
-    <key>NSCameraUsageDescription</key>
-    <string>Pedabook would like to use your camera</string>
-    <key>NSPhotoLibraryAddUsageDescription</key>
-    <string>Pedabook would like to save photos to your photo gallery</string>
-    <key>NSMicrophoneUsageDescription</key>
-    <string>Pedabook would like to use your microphone (for videos)</string>
+	<string>Pedabook would like access to your photo gallery</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Pedabook would like to use your camera</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>Pedabook would like to save photos to your photo gallery</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Pedabook would like to use your microphone (for videos)</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>AvenirLTStd-Black.otf</string>

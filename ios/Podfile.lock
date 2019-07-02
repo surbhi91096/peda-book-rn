@@ -1,0 +1,23 @@
+PODS:
+  - React/Core (0.11.0)
+  - rn-fetch-blob (0.10.6):
+    - React/Core
+
+DEPENDENCIES:
+  - rn-fetch-blob (from `../node_modules/rn-fetch-blob`)
+
+SPEC REPOS:
+  https://github.com/cocoapods/specs.git:
+    - React
+
+EXTERNAL SOURCES:
+  rn-fetch-blob:
+    :path: "../node_modules/rn-fetch-blob"
+
+SPEC CHECKSUMS:
+  React: ab1a2e21deb34965c38328d5ec40cc7d12c6050a
+  rn-fetch-blob: 766f85cabd2992300dfa1be2bc9e4e258abc6f04
+
+PODFILE CHECKSUM: e1eba8729fa180cf6dfddd861adbba29186f8599
+
+COCOAPODS: 1.7.1
