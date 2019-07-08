@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { View, ImageBackground, Image, Text, StyleSheet, TextInput, 
-    Dimensions, ScrollView,Platform,KeyboardAvoidingView,
+    Dimensions, ScrollView,Platform,KeyboardAvoidingView,AsyncStorage,
     TouchableOpacity, SafeAreaView } from 'react-native';
 import { DrawerActions,NavigationActions,withNavigation } from 'react-navigation';
 import MainStyles from '../Styles';
@@ -10,8 +10,20 @@ class HeaderMenu extends Component{
     constructor(props){
         super(props);
         this.state = {
-            isAccessModalOpen:false
+            isAccessModalOpen:false,
+            userPic: require('../../assets/user.png')
         }
+    }
+    async setUserData(){
+        let userDataStringfy = await AsyncStorage.getItem('userData');
+        let userData = JSON.parse(userDataStringfy);
+        this.setState({userData,Name:userData.Name,userPic:{uri:userData.ProfileImage}});
+    }
+    componentDidMount(){
+        this.props.navigation.addListener('didFocus',this.onFocus);
+    }
+    onFocus = ()=>{
+        this.setUserData();
     }
     render(){
         var behavior = (Platform.OS == 'ios')?'padding':'';
@@ -25,8 +37,8 @@ class HeaderMenu extends Component{
                     <TouchableOpacity onPress={()=>{this.setState({isAccessModalOpen:true})}}>
                         <Image source={require('../../assets/key.png')} style={{width:25,height:25}} />
                     </TouchableOpacity>
-                    <TouchableOpacity style={{marginLeft:15}} onPress={()=>{this.props.navigation.navigate('Profile');}}>
-                        <Image source={require('../../assets/user.png')} style={{width:25,height:25}} />
+                    <TouchableOpacity style={{marginLeft:15,width:25,height:25,overflow:"hidden",borderRadius:50}} onPress={()=>{this.props.navigation.navigate('Profile');}}>
+                        <Image source={this.state.userPic} style={{width:25,height:25}} />
                     </TouchableOpacity>
                 </View>
                 <Dialog

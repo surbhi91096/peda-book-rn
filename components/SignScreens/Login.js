@@ -9,7 +9,6 @@ import MainStyles from '../Styles';
 import Toast from 'react-native-simple-toast';
 import { SERVER_URL } from '../../Constants';
 import { ScrollView } from 'react-native-gesture-handler';
-//import PushNotification from 'react-native-push-notification';
 export default class Login extends Component {
     constructor(props) {
         super(props);

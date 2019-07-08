@@ -13,8 +13,10 @@
     "react-dom": "^16.6.3",
     "react-lifecycles-compat": "^3.0.4",
     "react-native": "^0.57.7",
+    "react-native-circular-progress": "^1.1.0",
     "react-native-datepicker": "^1.7.2",
     "react-native-dimension": "^1.0.6",
+    "react-native-fs": "^2.13.3",
     "react-native-gesture-handler": "^1.0.10",
     "react-native-image-picker": "^0.28.1",
     "react-native-lazyload": "^1.1.0",
@@ -23,6 +25,7 @@
     "react-native-phone-input": "^0.2.2",
     "react-native-popup-dialog": "^0.16.6",
     "react-native-simple-toast": "0.0.8",
+    "react-native-svg": "^9.5.1",
     "react-native-vector-icons": "^6.1.0",
     "react-navigation": "^3.0.6",
     "rn-fetch-blob": "^0.10.15"

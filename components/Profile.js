@@ -11,7 +11,6 @@ const { height, width } = Dimensions.get('window');
 class Profile extends Component {
     constructor(props) {
         super(props);
-
         this.state = {
             loading: false,
             isEditing: false,

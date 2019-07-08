@@ -16,12 +16,13 @@ import Login from '../SignScreens/Login';
 import ForgotPassword from '../SignScreens/ForgotPassword';
 import Logout from '../SignScreens/Logout';
 import Profile from'../Profile';
-import Profilesecond from'../Profilesecond';
-import Allitems from'../Allitems';
-import DownloadItems from'../DownloadItems';
-import Privacy from'../Privacy';
-import Terms from'../Terms';
-import AboutScreen from'../About';
+import Profilesecond from '../Profilesecond';
+import Allitems from '../Allitems';
+import DownloadItems from '../DownloadItems';
+import Privacy from '../Privacy';
+import Terms from '../Terms';
+import AboutScreen from '../About';
+import SingleBook from '../SingleBook';
 const drawerItemStyle = { 
     borderBottomWidth: 1, 
     borderBottomColor: '#147dbf', 
@@ -93,6 +94,9 @@ const Navigation = createStackNavigator({
     },
     ForgotPassword:{
         screen:ForgotPassword
+    },
+    SingleBook:{
+        screen:SingleBook
     }
    
 }, {
