@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, ImageBackground, Image, Text, StyleSheet, TextInput, 
+import { View, ImageBackground, Image, Text, StyleSheet, TextInput, RefreshControl,
     Dimensions, ScrollView,KeyboardAvoidingView,Platform,AsyncStorage,
     TouchableOpacity, SafeAreaView } from 'react-native';
 import MainStyles from './Styles';
@@ -13,6 +13,7 @@ import Loader from './Loader';
 import RNFS from 'react-native-fs';
 import { AnimatedCircularProgress } from 'react-native-circular-progress';
 import Pdf from 'react-native-pdf';
+import Slider from '@react-native-community/slider';
 const { height, width } = Dimensions.get('window');
 var myHeaders = new Headers();
 myHeaders.set('Accept', 'application/json');
@@ -39,24 +40,62 @@ class Allitems extends Component {
             currentBookPages:0,
             currentPageViewing:1,
             progressBarWidth:0,
+            curPage:0,
+            showTableContents:false,
+            tOFTab:'content',
+            tableContents:{},
+            downloadedItem:[],
+            currentBookIndex:-1,
+            isRefreshingList:false,
+        }
+        this.viewabilityConfig = {
+            waitForInteraction: true,
+            viewAreaCoveragePercentThreshold: 95
         }
     }
-    async setUserData(){
-        let userDataStringfy = await AsyncStorage.getItem('userData');
-        let userData = JSON.parse(userDataStringfy);
-        console.log(userData);
-        this.setState({userData,Name:userData.Name,userPic:{uri:userData.ProfileImage}});
+    setUserData = async()=>{
+        this.setState({data:[]});
+        await AsyncStorage.getItem('userData').then(async res=>{
+            let userData = JSON.parse(res);
+            var haveAccessCode = false;
+            if(typeof(userData.accessCode) != "undefined"){
+                haveAccessCode = true;
+            }
+            this.setState({userData,haveAccessCode,Name:userData.Name,userPic:{uri:userData.ProfileImage}});
+            this.setDownloadedItems();
+        });
+        
+    }
+    setDownloadedItems = async()=>{
+        await AsyncStorage.getItem('downloadedItem').then(async res=>{
+            let downloadedItem = JSON.parse(res);
+            if(!downloadedItem){
+                downloadedItem = [];
+            }
+            this.setState({downloadedItem});
+            if(this.state.haveAccessCode == false){
+                this.getBooksFromUserId();
+            }
+            else{
+                this.getBooksFromAccessCode();
+            }
+        });
+    }
+    async saveDetails(key, value) {
+        await AsyncStorage.setItem(key, value);
     }
     componentDidMount() {
-        this.setUserData();
-        setTimeout(()=>{
-            this.getBooks();
-        },1000);
+        this.props.navigation.addListener('didFocus',this.setUserData);
+        //this.setUserData();
+        // this.setDownloadedItems();
+        // setTimeout(()=>{
+        //     this.getBooks();
+        // },1000);
     }
     setTheWidthOfProgressBar = ()=>{
         this.setState({progressBarWidth:(100/this.state.currentBookPages)*this.state.currentPageViewing});
     }
-    getBooks = ()=>{
+    getBooksFromUserId = ()=>{
         var fd = new FormData();
         fd.append('UserId',this.state.userData.UserId);
         fetch(SERVER_URL+'get_assign_classes',{
@@ -79,7 +118,20 @@ class Allitems extends Component {
                         var exractFileName = (current.FilePath).split('/');
                         var fileName = exractFileName[exractFileName.length-1];
                         downloadFile = `file://${RNFS.DocumentDirectoryPath}/${fileName}`;
-                        RNFS.exists(downloadFile).then(r=>{
+                        ((current)=>{RNFS.exists(downloadFile).then(r=>{
+                            var exractFileName = (current.FilePath).split('/');
+                            var fileName = exractFileName[exractFileName.length-1];
+                            downloadFile = `file://${RNFS.DocumentDirectoryPath}/${fileName}`;
+                            var haveDownloaded = this.state.downloadedItem.filter(p => (p.accessCode == this.state.userData.accessCode && p.BookId == current.BookId));
+                            var bookMark = [];
+                            if(haveDownloaded.length < 1){
+                                r = false;
+                            }
+                            if(haveDownloaded.length > 0){
+                                if(typeof(haveDownloaded[0].bookmarksList) != "undefined" && haveDownloaded[0].bookmarksList.length > 0){
+                                    bookMark = haveDownloaded[0].bookmarksList;
+                                }
+                            }
                             data.push({
                                 BookId:current.BookId,
                                 ReaderId:current.ReaderId,
@@ -95,10 +147,11 @@ class Allitems extends Component {
                                 downloading:false,
                                 fileSize:'0 KB',
                                 percent:0,
-                                downloadedFile:downloadFile
+                                downloadedFile:downloadFile,
+                                bookmarksList:bookMark
                             });
                             this.setState({data});
-                        });
+                        });})(current);
                     }
                     else{
                         data.push({
@@ -116,16 +169,88 @@ class Allitems extends Component {
                             downloading:false,
                             fileSize:'0 KB',
                             percent:0,
-                            downloadedFile:downloadFile
+                            downloadedFile:downloadFile,
+                            bookmarksList:[]
                         });
                     }
                 }
                 this.setState({data});
-
             }
-            this.setState({loading:false});
+            this.setState({loading:false,isRefreshingList:false});
         })
         .catch(err=>{
+            console.log(err);
+            this.setState({loading:false,isRefreshingList:false,data:[]});
+        });
+    }
+    getBooksFromAccessCode = ()=>{
+        var fd = new FormData();
+        fd.append('AccessCode',this.state.userData.accessCode);
+        fetch(SERVER_URL+'get_ebook_access_code',{
+            method:'POST',
+            headers:myHeaders,
+            body:fd
+        })
+        .then(res=>{
+            console.log(res);
+            return res.json();
+        })
+        .then(response=>{
+            if(response.Status == 1){
+                var data = [];
+                var booksList =response.Result.books;
+                for(var i= 0;i<booksList.length;i++){
+                    var current = booksList[i];
+                    var downloadFile = '';
+                    var exractFileName = (current.FilePath).split('/');
+                    var fileName = exractFileName[exractFileName.length-1];
+                    downloadFile = `file://${RNFS.DocumentDirectoryPath}/${fileName}`;
+                    ((current)=>{RNFS.exists(downloadFile).then(r=>{
+                        var exractFileName = (current.FilePath).split('/');
+                        var fileName = exractFileName[exractFileName.length-1];
+                        downloadFile = `file://${RNFS.DocumentDirectoryPath}/${fileName}`;
+                        var haveDownloaded = this.state.downloadedItem.filter(p => (p.accessCode == this.state.userData.accessCode && p.BookId == current.BookId));
+                        var bookMark = [];
+                        if(haveDownloaded.length < 1){
+                            r = false;
+                        }
+                        if(haveDownloaded.length > 0){
+                            if(typeof(haveDownloaded[0].bookmarksList) != "undefined" && haveDownloaded[0].bookmarksList.length > 0){
+                                bookMark = haveDownloaded[0].bookmarksList;
+                            }
+                        }
+                        var saveDataArray = {
+                            BookId:current.BookId,
+                            ReaderId:current.ReaderId,
+                            FileId:current.FileId,
+                            EducatorId:current.EducatorId,
+                            CoverPhoto:current.CoverPhoto,
+                            BookTitle:current.BookTitle,
+                            BookTitle:current.BookTitle,
+                            BookAuthor:current.BookAuthor,
+                            desc:current.desc,
+                            FilePath:current.FilePath,
+                            IdDownload:r,
+                            downloading:false,
+                            fileSize:'0 KB',
+                            percent:0,
+                            downloadedFile:downloadFile,
+                            accessCode:'',
+                            bookmarksList:bookMark,
+                        };
+                        if(this.state.haveAccessCode == true){
+                            saveDataArray.accessCode = this.state.userData.accessCode;
+                        }
+                        data.push(saveDataArray);
+                        this.setState({data});
+                    });})(current);
+                }
+                this.setState({data});
+            }
+            this.setState({loading:false,isRefreshingList:false,data:[]});
+        })
+        .catch(err=>{
+            this.setState({loading:false,isRefreshingList:false,data:[]});
             console.log(err);
         });
     }
@@ -166,12 +291,12 @@ class Allitems extends Component {
         var exractFileName = sourceFilePath.split('/');
         var fileName = exractFileName[exractFileName.length-1];
         var cachedPath = `${RNFS.DocumentDirectoryPath}/${fileName}`;
+        console.log(sourceFilePath,cachedPath);
         let options = {
             fromUrl: sourceFilePath,
             toFile: cachedPath,
             background: true,
             begin: (info) => {
-                //console.log(info,index);
                 switch (info.statusCode) {
                     case 200:
                         var fileSize = this.humanFileSize(info.contentLength);
@@ -185,7 +310,6 @@ class Allitems extends Component {
                 }
             },
             progress: (info)=>{
-                //console.log(info);
                 var data = this.state.data;
                 data[index].percent = info.bytesWritten / info.contentLength * 100;
                 this.setState({data});
@@ -199,18 +323,29 @@ class Allitems extends Component {
             data[index].downloading = false;
             data[index].downloadedFile = `file://${cachedPath}`;
             data[index].IdDownload = true;
-            var fd = new FormData();
-            fd.append('EbookId',data[index].BookId);
-            fd.append('ReaderId',this.state.userData.UserId);
-            fetch(SERVER_URL+'download_ebooks',
-            {
-                method:'POST',
-                body:fd
-            })
-            .then(res=>{console.log(res);return res.json()})
-            .then(r=>{console.log(r);})
-            .catch(err=>{console.log(err);})
+            if(this.state.haveAccessCode == true){
+                data[index].accessCode = this.state.userData.accessCode;
+            }
+            var downloadedItem = this.state.downloadedItem;
+            downloadedItem.push(data[index]);
+            this.saveDetails('downloadedItem',JSON.stringify(downloadedItem));
+            if(this.state.haveAccessCode == false){
+                var fd = new FormData();
+                fd.append('EbookId',data[index].BookId);
+                fd.append('ReaderId',this.state.userData.UserId);
+                fetch(SERVER_URL+'download_ebooks',
+                {
+                    method:'POST',
+                    body:fd
+                })
+                .then(res=>{return res.json()})
+                .then(r=>{
+                })
+                .catch(err=>{console.log(err);})
+            }
             this.setState({data});
+        }).catch(err=>{
+            console.log(err)
         });
     }
     humanFileSize(bytes) {
@@ -231,6 +366,26 @@ class Allitems extends Component {
         let body = await response;
         return body;
     }
+    makeid(length) {
+        var result           = '';
+        var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        var charactersLength = characters.length;
+        for ( var i = 0; i < length; i++ ) {
+           result += characters.charAt(Math.floor(Math.random() * charactersLength));
+        }
+        return result;
+    }
+    isBookMarked  = ()=>{
+        var filteredBookMarks = this.state.data[this.state.currentBookIndex].bookmarksList.filter(p => p.pageIndex == this.state.currentPageViewing);
+        if(filteredBookMarks.length > 0){
+            return true;
+        }
+        return false;
+    }
+    componentDidUpdate(prevProps, prevState) {
+        // only update chart if the data has changed
+        console.log(prevState);
+      }      
     render() {
         const RemoveHiehgt = height - 112;
         return (
@@ -283,16 +438,13 @@ class Allitems extends Component {
                         renderItem={({item,index})=>{
                             var exractFileName = (item.FilePath).split('/');
                             var fileName = exractFileName[exractFileName.length-1];
-                            //RNFS.unlink(`${RNFS.DocumentDirectoryPath}/${fileName}`);
-                            // var filePath = `${RNFS.DocumentDirectoryPath}/${fileName}`;
-                            // var isDownloaded = this.checkIsFileExists(filePath);
                             return(
                                 <View style={{backgroundColor:'#FFFFFF',padding:5,flexDirection:'row',justifyContent:'space-between',marginVertical:6}}>
-                                    <View>
-                                        <TouchableOpacity style={{width:150,height:'100%'}} onPress={()=>{
-                                            this.setState({currentBook:item.downloadedFile,showPDF:true});
+                                    <View style={{height:'100%',maxHeight:180}}>
+                                        <TouchableOpacity style={{width:150,height:'100%',maxHeight:180}} onPress={()=>{
+                                            this.setState({currentBook:item.downloadedFile,showPDF:true,currentBookIndex:index});
                                         }}>
-                                            <Image source={{uri:item.CoverPhoto}} width={50} height={50} style={{width:150,height:'100%'}}/>
+                                            <Image source={{uri:item.CoverPhoto}} width={50} height={50} style={{width:150,height:'100%',maxHeight:180}}/>
                                         </TouchableOpacity>
                                         {
                                             item.IdDownload == false  && 
@@ -300,6 +452,84 @@ class Allitems extends Component {
                                                 position:'absolute',
                                                 width:'100%',
                                                 height:'100%',
+                                                maxHeight:180,
+                                                backgroundColor:'rgba(0,0,0,0.5)',
+                                                justifyContent:'center',
+                                                alignItems:'center',
+                                            }}>
+                                                {
+                                                    item.downloading == false && 
+                                                    <TouchableOpacity onPress={()=>{
+                                                        console.log(item.FilePath,index);
+                                                        this.downloadThisFile(item.FilePath,index);}} style={{backgroundColor:'#FFFFFF',width:30,height:30,justifyContent:'center',alignItems:'center',borderRadius:100}}>
+                                                        <Image source={require('../assets/d-cloud-icon.png')} style={{width:22,height:22}}/>
+                                                    </TouchableOpacity>
+                                                }
+                                                {
+                                                    item.downloading == true && 
+                                                    <View style={{justifyContent:'center',alignItems:'center'}}>
+                                                        <AnimatedCircularProgress
+                                                            size={30}
+                                                            width={3}
+                                                            rotation={0}
+                                                            duration={10}
+                                                            fill={item.percent}
+                                                            tintColor="#FFFFFF"
+                                                            onAnimationComplete={() => {}}
+                                                            backgroundColor="rgba(255,255,255,0.5)" 
+                                                        />
+                                                        <Text style={{color:'#FFFFFF',fontSize:13,marginTop:5}}>{item.fileSize}</Text>
+                                                    </View>
+                                                }
+                                            </View>
+                                        }
+                                    </View>
+                                    <View style={{paddingHorizontal:10,flexWrap:'wrap',flex:1}}>
+                                        <Text style={{fontSize:17,marginBottom:20}}>{item.BookTitle}</Text>
+                                        <Text style={{fontSize:13}}>{item.desc}</Text>
+                                        <TouchableOpacity style={{backgroundColor:'#971a31',maxWidth:150,marginTop:20,padding:7,flexDirection:"row",justifyContent:'space-between',alignItems:'center'}} onPress={()=>{
+                                            this.props.navigation.navigate('SingleBook',{BookId:item.BookId});
+                                        }}>
+                                            <Text style={{color:'#FFFFFF',fontSize:15}}>More Info </Text>
+                                            <Icon style={{color:'#FFFFFF',fontSize:15}} name="exclamation-circle" />
+                                        </TouchableOpacity>
+                                    </View>
+                                </View>
+                            );
+                        }}
+                        keyExtractor={(item)=>'key-'+this.makeid(8)+item.BookId}
+                        viewabilityConfig={this.viewabilityConfig}
+                        refreshControl={
+                            <RefreshControl
+                                refreshing={this.state.isRefreshingList}
+                                onRefresh={()=>{this.setState({isRefreshingList:true}),this.setDownloadedItems()}}
+                                title="Pull to refresh"
+                                colors={["#1d7bc3","red", "green", "blue"]}
+                            />
+                        }
+                    />
+                }
+                {
+                    this.state.renderedListData.length > 0 && 
+                    <FlatList 
+                        contentContainerStyle={{paddingHorizontal:10}}
+                        data={this.state.renderedListData}
+                        renderItem={({item})=>{
+                            return(
+                                <View style={{backgroundColor:'#FFFFFF',padding:5,flexDirection:'row',justifyContent:'space-between',marginVertical:6}}>
+                                    <View style={{height:'100%',maxHeight:180}}>
+                                        <TouchableOpacity style={{width:150,height:'100%',maxHeight:180}} onPress={()=>{
+                                            this.setState({currentBook:item.downloadedFile,showPDF:true});
+                                        }}>
+                                            <Image source={{uri:item.CoverPhoto}} width={50} height={50} style={{width:150,height:'100%',maxHeight:180}}/>
+                                        </TouchableOpacity>
+                                        {
+                                            item.IdDownload == false  && 
+                                            <View style={{
+                                                position:'absolute',
+                                                width:'100%',
+                                                height:'100%',
+                                                maxHeight:180,
                                                 backgroundColor:'rgba(0,0,0,0.5)',
                                                 justifyContent:'center',
                                                 alignItems:'center',
@@ -321,7 +551,7 @@ class Allitems extends Component {
                                                             duration={10}
                                                             fill={item.percent}
                                                             tintColor="#FFFFFF"
-                                                            onAnimationComplete={() => console.log('onAnimationComplete')}
+                                                            onAnimationComplete={() => {}}
                                                             backgroundColor="rgba(255,255,255,0.5)" 
                                                         />
                                                         <Text style={{color:'#FFFFFF',fontSize:13,marginTop:5}}>{item.fileSize}</Text>
@@ -348,32 +578,6 @@ class Allitems extends Component {
                     />
                 }
                 {
-                    this.state.renderedListData.length > 0 && 
-                    <FlatList 
-                    contentContainerStyle={{paddingHorizontal:10}}
-                    data={this.state.renderedListData}
-                        renderItem={({item})=>{
-                            return(
-                                <View style={{backgroundColor:'#FFFFFF',padding:5,flexDirection:'row',justifyContent:'space-between',marginVertical:6}}>
-                                    <View>
-                                        <Image source={require('../assets/default.png')} width={50} height={50} style={{width:150,height:150}}/>
-                                    </View>
-                                    <View style={{paddingHorizontal:10,flexWrap:'wrap',flex:1}}>
-                                        <Text style={{fontSize:17,marginBottom:20}}>{item.title}</Text>
-                                        <Text style={{fontSize:13}}>Lorem Isum Dolar set imet is that a simple text paraghrap which show demo content on every.</Text>
-                                        <TouchableOpacity style={{backgroundColor:'#971a31',maxWidth:150,marginTop:20,padding:7,flexDirection:"row",justifyContent:'space-between',alignItems:'center'}}>
-                                            <Text style={{color:'#FFFFFF',fontSize:15}}>More Info </Text>
-                                            <Icon style={{color:'#FFFFFF',fontSize:15}} name="exclamation-circle" />
-                                        </TouchableOpacity>
-                                    </View>
-                                </View>
-                            );
-                        }}
-                        keyExtractor={(item)=>'key-'+item.id}
-                        viewabilityConfig={this.viewabilityConfig}
-                    />
-                }
-                {
                     this.state.renderedListData.length < 1 && this.state.noFilterData ==true && 
                     <View style={{flex:1,minHeight:RemoveHiehgt,paddingHorizontal:10,paddingBottom:40,alignItems:'center',justifyContent:'center'}}>
                         <Text style={{color:'#971a31',fontSize:17}}>No Data Found</Text>
@@ -384,17 +588,23 @@ class Allitems extends Component {
                     <Text style={{color:'#971a31',fontSize:11}}>Pedabook</Text>
                 </View>
                 {this.state.showPDF == true && 
-                <View style={{
-                    backgroundColor:'#FFFFFF',
-                    position:'absolute',
-                    top:0,
-                    left:0
-                }}>
+                <View style={{backgroundColor:'#FFFFFF',position:'absolute',top:0,left:0}}>
                     <View style={[MainStyles.navHeaderWrapper,{justifyContent:'space-between'}]}>
                         <TouchableOpacity onPress={() => { this.setState({showPDF:false,currentBook:''}) }} style={{ paddingHorizontal: 10 }}>
                             <Image source={require('../assets/left-ar.png')} style={{ width: 10, height: 19 }} />
                         </TouchableOpacity>
                         <View style={{alignItems:'flex-end',justifyContent:'center',flexDirection:'row'}}>
+                            <TouchableOpacity style={styles.pdfActionBtns} onPress={()=>{
+                                var bookmarkData = {PageTitle:'Page - '+(this.state.currentPageViewing+1),pageIndex:this.state.currentPageViewing};
+                                var data = this.state.data;
+                                if(!this.isBookMarked()){
+                                    data[this.state.currentBookIndex].bookmarksList.push(bookmarkData);
+                                }
+                                this.setState({data,currentBookMarksList:data[this.state.currentBookIndex].bookmarksList});
+                                console.log(this.state.currentPageViewing,this.state.currentBookIndex);
+                            }}>
+                                <Image source={(this.isBookMarked())?require('../assets/bookmark.png'):require('../assets/bookmark-o.png')} style={{ width: 19, height: 19 }} />
+                            </TouchableOpacity>
                             <TouchableOpacity style={styles.pdfActionBtns}>
                                 <Image source={require('../assets/edit.png')} style={{ width: 19, height: 19 }} />
                             </TouchableOpacity>
@@ -412,10 +622,11 @@ class Allitems extends Component {
                     <Pdf
                     source={{uri:this.state.currentBook}}
                     activityIndicatorProps={{color:'#971a31'}}
-                    onLoadComplete={(numberOfPages,filePath)=>{
-                        this.setState({currentBookPages:numberOfPages});
+                    onLoadComplete={(numberOfPages,filePath,{width,height},tableContents)=>{;
+                        this.setState({currentBookPages:numberOfPages,tableContents});
                         setTimeout(()=>{this.setTheWidthOfProgressBar();});
                     }}
+                    page={this.state.curPage}
                     onPageChanged={(page,numberOfPages)=>{
                         this.setState({currentPageViewing:page});
                         setTimeout(()=>{this.setTheWidthOfProgressBar()},200);
@@ -425,50 +636,126 @@ class Allitems extends Component {
                     }}
                     enablePaging={true}
                     style={styles.pdf}/>
+                    {/* PDF Viewer bottom buttons */}
                     <View style={[MainStyles.navHeaderWrapper,{justifyContent:'space-between',borderTopWidth:1,borderBottomWidth:0,borderTopColor: '#9e2d42'}]}>
-                        <TouchableOpacity onPress={() => { }} style={{ paddingHorizontal: 10 }}>
+                        <TouchableOpacity onPress={() => {  this.setState({showTableContents:true});}} style={{ paddingHorizontal: 10 }}>
                             <Image source={require('../assets/menu.png')} style={{ width: 19, height: 19 }} />
                         </TouchableOpacity>
-                        <View style={{
-                            flex:1,
-                            paddingHorizontal:15
-                        }}>
-                            <TouchableOpacity style={{
-                                width:'100%',
-                                height:5,
-                                borderRadius:10,
-                                backgroundColor:'rgba(151, 26, 49, 0.5)',
-
-                            }}>
-                                <View style={{
-                                    position:'absolute',
-                                    width:`${this.state.progressBarWidth}%`,
-                                    height:5,
-                                    borderRadius:10,
-                                    backgroundColor:'#971a31',
-                                }}>
-                                </View>
-                            </TouchableOpacity>
-                            <TouchableOpacity style={{
-                                width:15,
-                                height:15,
-                                backgroundColor:'#971a31',
-                                position:'absolute',
-                                top:-5,
-                                left:`${this.state.progressBarWidth}%`,
-                                borderRadius:100
-                            }} onLongPress={()=>{
-                                
-                            }}>
-
-                            </TouchableOpacity>
+                        <View style={{width:"78%"}}>
+                            <Slider
+                                style={{width: "100%", height: 20}}
+                                minimumValue={1}
+                                step={1}
+                                value={this.state.currentPageViewing}
+                                maximumValue={this.state.currentBookPages}
+                                minimumTrackTintColor="#971a31"
+                                thumbTintColor="#971a31"
+                                maximumTrackTintColor="#971a31"
+                                onValueChange={(res)=>{this.setState({curPage:res})}}
+                            />
                         </View>
                         <TouchableOpacity onPress={() => { }} style={{ paddingHorizontal: 10 }}>
                             <Image source={require('../assets/page-menu.png')} style={{ width: 19, height: 19 }} />
                         </TouchableOpacity>
                     </View>
+                    {/* Table of contents */}
+                    {
+                        this.state.showTableContents == true && 
+                        <View style={{
+                            position:'absolute',
+                            top:0,
+                            width:'100%',
+                            height:'100%',
+                            backgroundColor:'#FFFFFF',
+                            zIndex:1500
+                        }}>
+                            <View style={[MainStyles.navHeaderWrapper,{justifyContent:'flex-start'}]}>
+                                <TouchableOpacity onPress={() => { this.setState({showTableContents:false}); }} style={{ paddingHorizontal: 10,flexDirection:'row',alignItems:'center',justifyContent:'center' }}>
+                                    <Image source={require('../assets/left-ar.png')} style={{ width: 10, height: 19 }} />
+                                    <Text style={{marginLeft:12,
+                                        fontFamily: 'AvenirLTStd-Roman', color: '#403f41', fontSize: 16, paddingRight: 120
+                                    }}>
+                                        Table Of Contents
+                                    </Text>
+                                </TouchableOpacity>
+                            </View>
+                            <View style={{
+                                flex:1,
+                                height:height-47,
+                            }}>
+                                <View style={{
+                                    flexDirection:'row',
+                                    justifyContent:'space-around',
+                                    alignItems:'center',
+                                    borderBottomWidth:2,
+                                    borderBottomColor:'#971a31'
+                                }}>
+                                    <TouchableOpacity style={[styles.tOCBtns,(this.state.tOFTab == 'content')?{backgroundColor:'#971a31'}:{}]} onPress={()=>{this.setState({tOFTab:'content'})}}>
+                                        <Text style={[styles.tOCBtnsText,(this.state.tOFTab == 'content')?{color:'#FFFFFF'}:{}]}>Contents</Text>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity style={[styles.tOCBtns,(this.state.tOFTab == 'bookmark')?{backgroundColor:'#971a31'}:{}]} onPress={()=>{this.setState({tOFTab:'bookmark'})}}>
+                                        <Text style={[styles.tOCBtnsText,(this.state.tOFTab == 'bookmark')?{color:'#FFFFFF'}:{}]}>Bookmarks</Text>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity style={[styles.tOCBtns,(this.state.tOFTab == 'resource')?{backgroundColor:'#971a31'}:{}]} onPress={()=>{this.setState({tOFTab:'resource'})}}>
+                                        <Text style={[styles.tOCBtnsText,(this.state.tOFTab == 'resource')?{color:'#FFFFFF'}:{}]}>Resources</Text>
+                                    </TouchableOpacity>
+                                </View>
+                                {
+                                    this.state.tOFTab == 'content' && 
+                                    <FlatList 
+                                        data={this.state.tableContents}
+                                        contentContainerStyle={{height:height-47}}
+                                        renderItem={({item})=>{
+                                            return (
+                                            <TouchableOpacity style={{
+                                                width:'100%',
+                                                paddingHorizontal:10,
+                                                paddingVertical:10,
+                                                borderBottomWidth:1,
+                                                justifyContent:'space-between',
+                                                alignItems:'center',
+                                                borderBottomColor:'#971a31',
+                                                flexDirection:'row'
+                                            }}>
+                                                <Text style={{color:'#971a31',fontSize:16}}>{item.title}</Text>
+                                                <View>
+                                                    <Icon name="chevron-down" style={{color:'#971a31'}} />
+                                                </View>
+                                            </TouchableOpacity>);
+                                        }}
+                                        
+                                        keyExtractor={(item)=>'key-'+this.makeid(10)+(new Date()).getTime()+item.pageIdx}
+                                    />
+                                }
+                                {
+                                    this.state.tOFTab == 'bookmark' && 
+                                    <FlatList 
+                                        data={this.state.currentBookMarksList}
+                                        contentContainerStyle={{height:height-47}}
+                                        renderItem={({item})=>{
+                                            return (
+                                            <TouchableOpacity style={{
+                                                width:'100%',
+                                                paddingHorizontal:10,
+                                                paddingVertical:10,
+                                                borderBottomWidth:1,
+                                                justifyContent:'space-between',
+                                                alignItems:'center',
+                                                borderBottomColor:'#971a31',
+                                                flexDirection:'row'
+                                            }}>
+                                                <Text style={{color:'#971a31',fontSize:16}}>{item.PageTitle}</Text>
+                                            </TouchableOpacity>);
+                                        }}
+                                        
+                                        keyExtractor={(item)=>'key-'+this.makeid(10)+(new Date()).getTime()+item.pageIdx}
+                                    />
+                                }
+                            </View>
+                        </View>
+                    }
                 </View>
-            }
+                }
             </SafeAreaView>
         );
     }
@@ -486,6 +773,18 @@ const styles = StyleSheet.create({
     pdf: {
         height:Dimensions.get('window').height - 115,
         width:Dimensions.get('window').width,
+    },
+    tOCBtns:{
+        paddingVertical:10,
+        
+        textAlign:'center',
+        alignItems:'center',
+        justifyContent:'center',
+        width:'33.33333333%'
+    },
+    tOCBtnsText:{
+        color:'#971a31',
+        fontSize:17
     }
 });
 export default Allitems;

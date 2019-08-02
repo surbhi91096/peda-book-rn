@@ -14,9 +14,11 @@ class Logout extends Component{
         await AsyncStorage.setItem(key,value);
     }
     async setUserData(){
-        let userDataStringfy = await AsyncStorage.getItem('userData');
-        let userData = JSON.parse(userDataStringfy);
-        this.setState({userData});
+        await AsyncStorage.getItem('userData').then(async(userDataStringfy)=>{
+            let userData = JSON.parse(userDataStringfy);
+            this.setState({userData});
+            this.authenticateSession();
+        });
     }
     authenticateSession(){
         //this.getToken(this.logoutFromServer.bind(this));
@@ -41,6 +43,7 @@ class Logout extends Component{
         //     if(response.status == 200){
                 this.saveDetails('isUserLoggedIn',"false");
                 this.saveDetails('userData',"");
+                this.setState({loading:true});
                 setTimeout(()=>{
                     this.setState({loading:false});
                     this.props.navigation.navigate('Login');
@@ -54,9 +57,6 @@ class Logout extends Component{
     }
     onFocus = ()=>{
         this.setUserData();
-        setTimeout(()=>{
-            this.authenticateSession();
-        },1500);
     }
     render(){
         return(

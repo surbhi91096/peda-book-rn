@@ -11,13 +11,21 @@ class HeaderMenu extends Component{
         super(props);
         this.state = {
             isAccessModalOpen:false,
-            userPic: require('../../assets/user.png')
+            userPic: require('../../assets/user.png'),
+            userData:{accessCode:''},
+            haveAccessCode:false
         }
     }
     async setUserData(){
-        let userDataStringfy = await AsyncStorage.getItem('userData');
-        let userData = JSON.parse(userDataStringfy);
-        this.setState({userData,Name:userData.Name,userPic:{uri:userData.ProfileImage}});
+        await AsyncStorage.getItem('userData').then(res=>{
+            let userData = JSON.parse(res);
+            var haveAccessCode = false;
+            if(typeof(userData.accessCode) != "undefined"){
+                haveAccessCode = true;
+            }
+            this.setState({userData,haveAccessCode,Name:userData.Name,userPic:{uri:userData.ProfileImage}});
+        });
+
     }
     componentDidMount(){
         this.props.navigation.addListener('didFocus',this.onFocus);
@@ -29,18 +37,23 @@ class HeaderMenu extends Component{
         var behavior = (Platform.OS == 'ios')?'padding':'';
         return(
             <View style={MainStyles.navHeaderWrapper}>
-                <TouchableOpacity onPress={()=>{this.props.navigation.dispatch(DrawerActions.toggleDrawer())}}>
-                    <Icon name="bars" style={{fontSize:20,color:'#971a31'}} />
-                </TouchableOpacity>
-                <Text style={{ fontFamily: 'AvenirLTStd-Roman', color: '#971a31', fontSize: 16 }}>Pedabook</Text>
                 <View style={{flexDirection:'row'}}>
-                    <TouchableOpacity onPress={()=>{this.setState({isAccessModalOpen:true})}}>
-                        <Image source={require('../../assets/key.png')} style={{width:25,height:25}} />
+                    <TouchableOpacity onPress={()=>{this.props.navigation.dispatch(DrawerActions.toggleDrawer())}}>
+                        <Icon name="bars" style={{fontSize:20,color:'#971a31'}} />
                     </TouchableOpacity>
-                    <TouchableOpacity style={{marginLeft:15,width:25,height:25,overflow:"hidden",borderRadius:50}} onPress={()=>{this.props.navigation.navigate('Profile');}}>
-                        <Image source={this.state.userPic} style={{width:25,height:25}} />
-                    </TouchableOpacity>
+                    <Text style={{ fontFamily: 'AvenirLTStd-Roman', color: '#971a31', fontSize: 16,marginLeft:20 }}>Pedabook</Text>
                 </View>
+                {
+                    typeof(this.state.userData.accessCode) == "undefined" && 
+                    <View style={{flexDirection:'row'}}>
+                        <TouchableOpacity onPress={()=>{this.setState({isAccessModalOpen:true})}}>
+                            <Image source={require('../../assets/key.png')} style={{width:25,height:25}} />
+                        </TouchableOpacity>
+                        <TouchableOpacity style={{marginLeft:15,width:25,height:25,overflow:"hidden",borderRadius:50}} onPress={()=>{this.props.navigation.navigate('Profile');}}>
+                            <Image source={this.state.userPic} style={{width:25,height:25}} />
+                        </TouchableOpacity>
+                    </View>
+                }
                 <Dialog
                     visible={this.state.isAccessModalOpen}
                     dialogStyle={{ padding:0,

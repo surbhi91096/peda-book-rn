@@ -55,7 +55,7 @@ export default class Login extends Component {
         })
         .then((res)=>res.json())
         .then((response)=>{
-            console.log(response.Result);
+            console.log(response);
             if(response.Status == 1){
                 this.saveDetails('isUserLoggedIn',"true");
                 this.saveDetails('userData',JSON.stringify(response.Result));
@@ -63,7 +63,47 @@ export default class Login extends Component {
                 //Toast.show(''+response.result.otp,Toast.SHORT);
                 //this.setState({otpField:true,serverOtp:response.result.otp,userId:response.result.id});
             }
-            Toast.show(response.Message,Toast.SHORT);
+            setTimeout(()=>{
+                Toast.show(response.Message,Toast.SHORT);
+            },200);
+            this.setState({loading:false});
+        })
+        .catch((err)=>{
+            //this.props.navigation.navigate('Home');
+            console.log(err);
+            this.checkNetInfo();
+            this.setState({loading:false});
+        });
+    }
+    loginWithAccessCode = ()=>{
+        if(this.state.acode == ''){
+            Toast.show('Access code should not be blank',Toast.SHORT);
+            return false;
+        }
+        if(this.state.acode.length < 8){
+            Toast.show('Access code should 8 characters long',Toast.SHORT);
+            return false;
+        }
+        var jsonArray = {
+            AccessCode: this.state.acode
+        };
+        fetch(SERVER_URL+'access_code_login',{
+            method:'POST',
+            headers: {
+                //Accept: 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(jsonArray)
+        })
+        .then((res)=>res.json())
+        .then((response)=>{
+            console.log(response);
+            if(response.Status == 1){
+                this.saveDetails('isUserLoggedIn',"true");
+                this.saveDetails('userData',JSON.stringify({'accessCode':response.Result.AccessCode}));
+                this.props.navigation.navigate('Home');
+            }
+            Toast.show(response.Message,Toast.LONG);
             this.setState({loading:false});
         })
         .catch((err)=>{
@@ -225,9 +265,10 @@ export default class Login extends Component {
                                         underlineColorAndroid="transparent"
                                         value={this.state.acode}
                                         placeholder="Enter Access Code"
+                                        maxLength={8}
                                     />
                                 </View>
-                                <TouchableOpacity style={MainStyles.psosBtn} onPress={() => { this.accessCode(); }}>
+                                <TouchableOpacity style={MainStyles.psosBtn} onPress={() => { this.loginWithAccessCode(); }}>
                                     <Text style={MainStyles.psosBtnText}>Send</Text>
                                 </TouchableOpacity>
                             </View>

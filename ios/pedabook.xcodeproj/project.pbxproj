@@ -48,7 +48,6 @@
 		2DCD954D1E0B4F2C00145EB5 /* pedabookTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* pedabookTests.m */; };
 		2DF0FFEE2056DD460020B375 /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DAD3EA31DF850E9000B6D8A /* libReact.a */; };
 		2EEE99257DC14BF98566F243 /* AvenirLTStd-BlackOblique.otf in Resources */ = {isa = PBXBuildFile; fileRef = B8185F34DFF945568E279A5A /* AvenirLTStd-BlackOblique.otf */; };
-		2F0036CF8E70469382B843B8 /* libRNFetchBlob.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 55D2D47B2AC540028A5D6A60 /* libRNFetchBlob.a */; };
 		3D55BDED5B474B9099D1F9BA /* Roboto-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 576CA5B55A3743D680E58700 /* Roboto-Regular.ttf */; };
 		3DFDCDF6D884478B9CAEDC3C /* Feather.ttf in Resources */ = {isa = PBXBuildFile; fileRef = EC2D1921575544B59599293C /* Feather.ttf */; };
 		45CF5AA4777B40F29E26951F /* libRNGestureHandler.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7F04449C45A6453A817214ED /* libRNGestureHandler.a */; };
@@ -453,13 +452,14 @@
 		139FDEE61B06529A00C62182 /* RCTWebSocket.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTWebSocket.xcodeproj; path = "../node_modules/react-native/Libraries/WebSocket/RCTWebSocket.xcodeproj"; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* pedabook.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = pedabook.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = pedabook/AppDelegate.h; sourceTree = "<group>"; };
-		13B07FB01A68108700A75B9A /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AppDelegate.m; path = pedabook/AppDelegate.m; sourceTree = "<group>"; };
+		13B07FB01A68108700A75B9A /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AppDelegate.m; path = pedabook/AppDelegate.m; sourceTree = "<group>"; tabWidth = 2; };
 		13B07FB21A68108700A75B9A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = pedabook/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = pedabook/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = pedabook/main.m; sourceTree = "<group>"; };
 		146833FF1AC3E56700842450 /* React.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = React.xcodeproj; path = "../node_modules/react-native/React/React.xcodeproj"; sourceTree = "<group>"; };
 		16CCDF5ED08344E3BB774CDF /* AvenirLTStd-Oblique.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "AvenirLTStd-Oblique.otf"; path = "../assets/fonts/AvenirLTStd-Oblique.otf"; sourceTree = "<group>"; };
+		181B314022D9E27700DFA614 /* libRNFS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libRNFS.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		2A0EA118ABAE47BCA09B03DE /* libRNVectorIcons-tvOS.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = "libRNVectorIcons-tvOS.a"; sourceTree = "<group>"; };
 		2B609BF82567459AB6F619F7 /* Roboto-Light.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Roboto-Light.otf"; path = "../assets/fonts/Roboto-Light.otf"; sourceTree = "<group>"; };
 		2D02E47B1E0B4A5D006451C7 /* pedabook-tvOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "pedabook-tvOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -558,7 +558,6 @@
 				DFD1126FF37F490B92543495 /* libReactNativePermissions.a in Frameworks */,
 				E2C41F828C4549D18FA7EF58 /* libLRDRCTSimpleToast.a in Frameworks */,
 				EE0503AB4F72446590CF3052 /* libRNVectorIcons.a in Frameworks */,
-				2F0036CF8E70469382B843B8 /* libRNFetchBlob.a in Frameworks */,
 				1DEA2DF8550F43219B325400 /* libRCTPdf.a in Frameworks */,
 				53300D6E5CE1BA71CE13B072 /* libPods-pedabook.a in Frameworks */,
 			);
@@ -795,6 +794,7 @@
 			children = (
 				2D16E6891FA4F8E400B85C8A /* libReact.a */,
 				AF5831E7D754A2AE949F2A57 /* libPods-pedabook.a */,
+				181B314022D9E27700DFA614 /* libRNFS.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -1749,10 +1749,9 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				OTHER_LDFLAGS = (
 					"$(inherited)",
-					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.pedabook;
 				PRODUCT_NAME = pedabook;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
@@ -1779,10 +1778,9 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				OTHER_LDFLAGS = (
 					"$(inherited)",
-					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.pedabook;
 				PRODUCT_NAME = pedabook;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
@@ -2043,7 +2041,7 @@
 				00E356F71AD99517003FC87E /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "pedabook" */ = {
 			isa = XCConfigurationList;
@@ -2052,7 +2050,7 @@
 				13B07F951A680F5B00A75B9A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		2D02E4BA1E0B4A5E006451C7 /* Build configuration list for PBXNativeTarget "pedabook-tvOS" */ = {
 			isa = XCConfigurationList;
@@ -2061,7 +2059,7 @@
 				2D02E4981E0B4A5E006451C7 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		2D02E4BB1E0B4A5E006451C7 /* Build configuration list for PBXNativeTarget "pedabook-tvOSTests" */ = {
 			isa = XCConfigurationList;
@@ -2070,7 +2068,7 @@
 				2D02E49A1E0B4A5E006451C7 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "pedabook" */ = {
 			isa = XCConfigurationList;
@@ -2079,7 +2077,7 @@
 				83CBBA211A601CBA00E9B192 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 /* End XCConfigurationList section */
 	};

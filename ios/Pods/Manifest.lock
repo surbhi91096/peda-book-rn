@@ -1,23 +1,54 @@
 PODS:
-  - React/Core (0.11.0)
+  - React (0.57.7):
+    - React/Core (= 0.57.7)
+  - react-native-slider (1.1.4):
+    - React
+  - React/Core (0.57.7):
+    - yoga (= 0.57.7.React)
+  - React/RCTImage (0.57.7):
+    - React/Core
+    - React/RCTNetwork
+  - React/RCTNetwork (0.57.7):
+    - React/Core
   - rn-fetch-blob (0.10.6):
     - React/Core
+  - RNFS (2.13.3):
+    - React
+  - RNSVG (9.5.1):
+    - React
+  - yoga (0.57.7.React)
 
 DEPENDENCIES:
+  - "react-native-slider (from `../node_modules/@react-native-community/slider`)"
+  - React/Core (from `../node_modules/react-native`)
+  - React/RCTImage (from `../node_modules/react-native`)
   - rn-fetch-blob (from `../node_modules/rn-fetch-blob`)
-
-SPEC REPOS:
-  https://github.com/cocoapods/specs.git:
-    - React
+  - RNFS (from `../node_modules/react-native-fs`)
+  - RNSVG (from `../node_modules/react-native-svg`)
+  - yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
 EXTERNAL SOURCES:
+  React:
+    :path: "../node_modules/react-native"
+  react-native-slider:
+    :path: "../node_modules/@react-native-community/slider"
   rn-fetch-blob:
     :path: "../node_modules/rn-fetch-blob"
+  RNFS:
+    :path: "../node_modules/react-native-fs"
+  RNSVG:
+    :path: "../node_modules/react-native-svg"
+  yoga:
+    :path: "../node_modules/react-native/ReactCommon/yoga"
 
 SPEC CHECKSUMS:
-  React: ab1a2e21deb34965c38328d5ec40cc7d12c6050a
+  React: 67899bbb285ceb9b4ee1c88b3991602ba5772ad2
+  react-native-slider: 9fb33ac32cb788360adb5c38685aa3642bebd93c
   rn-fetch-blob: 766f85cabd2992300dfa1be2bc9e4e258abc6f04
+  RNFS: c9bbde46b0d59619f8e7b735991c60e0f73d22c1
+  RNSVG: 0eb087cfb5d7937be93c45b163b26352a647e681
+  yoga: 192d724e53380b783e09b7d687a55cd8ed5188be
 
-PODFILE CHECKSUM: e1eba8729fa180cf6dfddd861adbba29186f8599
+PODFILE CHECKSUM: 83db5ad6723e8a9983b007c5953fca4d58159f45
 
 COCOAPODS: 1.7.1

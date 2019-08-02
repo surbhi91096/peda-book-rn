@@ -22,10 +22,11 @@ class Profile extends Component {
     async saveDetails(key, value) {
         await AsyncStorage.setItem(key, value);
     }
-    async setUserData(){
-        let userDataStringfy = await AsyncStorage.getItem('userData');
-        let userData = JSON.parse(userDataStringfy);
-        this.setState({userData,Name:userData.Name,userPic:{uri:userData.ProfileImage}});
+    setUserData = async ()=>{
+        await AsyncStorage.getItem('userData').then((userDataStringfy)=>{
+            let userData = JSON.parse(userDataStringfy);
+            this.setState({userData,Name:userData.Name,userPic:{uri:userData.ProfileImage}});
+        });
     }
     saveProfile=()=>{
         this.setState({loading:true});
@@ -55,7 +56,8 @@ class Profile extends Component {
         
     }
     componentDidMount() {
-        this.setUserData()
+        this.props.navigation.addListener('didFocus',this.setUserData);
+        //this.setUserData()
     }
     uploadPic = ()=>{
         this.setState({loading:true});
