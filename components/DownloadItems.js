@@ -10,6 +10,7 @@ import HeaderMenu from './Navigation/HeaderMenu';
 import Loader from './Loader';
 import Pdf from 'react-native-pdf';
 import Slider from '@react-native-community/slider';
+import RNFS from 'react-native-fs';
 const { height, width } = Dimensions.get('window');
 class DownloadItems extends Component {
     constructor(props) {
@@ -36,6 +37,9 @@ class DownloadItems extends Component {
             viewAreaCoveragePercentThreshold: 95
         }
     }
+    async saveDetails(key, value) {
+        await AsyncStorage.setItem(key, value);
+    }
     componentDidMount() {
         this.props.navigation.addListener('didFocus',this.setDownloadedItems);
     }
@@ -46,17 +50,27 @@ class DownloadItems extends Component {
                 var downloadItemData = JSON.parse(dRes);
                 var downloadItem = [];
                 for(var i = 0;i<downloadItemData.length;i++){
-                    console.log(downloadItemData[i].accessCode , this.state.userData.accessCode);
-                    if(downloadItemData[i].ReaderId == this.state.userData.UserId){
-                        downloadItem.push(downloadItemData[i]);
-                    }
-                    else if(typeof(downloadItemData[i].accessCode) != "undefined"){
-                        if(typeof(this.state.userData.accessCode) != "undefined"){
-                            if(downloadItemData[i].accessCode == this.state.userData.accessCode){
-                                downloadItem.push(downloadItemData[i]);
+                    console.log(downloadItemData[i]);
+                    var currentItem = downloadItemData[i];
+                    ((currentItem)=>{
+                        console.log(currentItem.downloadedFile);
+                        RNFS.exists(currentItem.downloadedFile).then(r=>{
+                            if(r){
+                                if(currentItem.ReaderId == this.state.userData.UserId){
+                                    downloadItem.push(currentItem);
+                                }
+                                else if(typeof(downloadItemData[i].accessCode) != "undefined"){
+                                    if(typeof(this.state.userData.accessCode) != "undefined"){
+                                        if(downloadItemData[i].accessCode == this.state.userData.accessCode){
+                                            downloadItem.push(currentItem);
+                                        }
+                                    }
+                                }
                             }
-                        }
-                    }
+                        }).catch(err=>{
+                            console.log(err.message);
+                        });
+                    })(currentItem);   
                 }
                 this.setState({data:downloadItem,loading:false,isRefreshingList:false});
             });

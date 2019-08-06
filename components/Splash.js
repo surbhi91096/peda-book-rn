@@ -27,7 +27,7 @@ class SplashScreen extends Component{
             if(isUserLoggedIn == "true"){
                 await AsyncStorage.getItem('userData').then(async (userDataStringfy)=>{
                     let userData = JSON.parse(userDataStringfy);
-                    console.log(userData);
+                    
                     if(userData){
                         var fd = new FormData();
                         if(typeof(userData.accessCode) != "undefined"){

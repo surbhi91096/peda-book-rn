@@ -14,6 +14,7 @@ import RNFS from 'react-native-fs';
 import { AnimatedCircularProgress } from 'react-native-circular-progress';
 import Pdf from 'react-native-pdf';
 import Slider from '@react-native-community/slider';
+import DownloadItems from './DownloadItems';
 const { height, width } = Dimensions.get('window');
 var myHeaders = new Headers();
 myHeaders.set('Accept', 'application/json');
@@ -86,11 +87,6 @@ class Allitems extends Component {
     }
     componentDidMount() {
         this.props.navigation.addListener('didFocus',this.setUserData);
-        //this.setUserData();
-        // this.setDownloadedItems();
-        // setTimeout(()=>{
-        //     this.getBooks();
-        // },1000);
     }
     setTheWidthOfProgressBar = ()=>{
         this.setState({progressBarWidth:(100/this.state.currentBookPages)*this.state.currentPageViewing});
@@ -108,17 +104,46 @@ class Allitems extends Component {
             return res.json();
         })
         .then(response=>{
-            console.log(response);
             if(response.Status == 1){
                 var data = [];
-                for(var i= 0;i<response.Result.length;i++){
-                    var current = response.Result[i];
+                var deletedEbooks = response.Result.ebookDelete;
+                if(this.state.downloadedItem.length > 0 && response.Result.ebookDelete.length > 0){
+                    for(var k=0;k<this.state.downloadedItem.length;k++){
+                        var currentD = this.state.downloadedItem[k];
+                        ((current,index)=>{
+                            var result = deletedEbooks.filter(function(v,i) {
+                                return v['EbookId'] === "96";//+current.BookId;
+                            });
+                            if(result.length > 0){
+                                RNFS.exists(current.downloadedFile).then(r=>{
+                                    if(r){
+                                        RNFS.unlink(current.downloadedFile)
+                                        .then(() => {
+                                            delete this.state.downloadedItem[index];
+                                        })
+                                        .catch((err) => {
+                                            console.log(err.message);
+                                        });
+                                    }
+                                })
+                                .catch(err=>{
+                                    console.log(err.message);
+                                });
+                            }
+                            if(index == (this.state.downloadedItem.length-1)){
+                                this.saveDetails('downloadedItem',JSON.stringify(this.state.downloadedItem));
+                            }
+                        })(currentD,k)
+                    }
+                }
+                for(var i= 0;i<response.Result.ebookList.length;i++){
+                    var current = response.Result.ebookList[i];
                     var downloadFile = '';
                     if(current.IdDownload == true){
                         var exractFileName = (current.FilePath).split('/');
                         var fileName = exractFileName[exractFileName.length-1];
                         downloadFile = `file://${RNFS.DocumentDirectoryPath}/${fileName}`;
-                        ((current)=>{RNFS.exists(downloadFile).then(r=>{
+                        ((current,k)=>{RNFS.exists(downloadFile).then(r=>{
                             var exractFileName = (current.FilePath).split('/');
                             var fileName = exractFileName[exractFileName.length-1];
                             downloadFile = `file://${RNFS.DocumentDirectoryPath}/${fileName}`;
@@ -151,7 +176,7 @@ class Allitems extends Component {
                                 bookmarksList:bookMark
                             });
                             this.setState({data});
-                        });})(current);
+                        });})(current,i);
                     }
                     else{
                         data.push({
@@ -199,6 +224,35 @@ class Allitems extends Component {
             if(response.Status == 1){
                 var data = [];
                 var booksList =response.Result.books;
+                if(this.state.downloadedItem.length > 0 && response.Result.ebookDelete.length > 0){
+                    for(var k=0;k<this.state.downloadedItem.length;k++){
+                        var currentD = this.state.downloadedItem[k];
+                        ((current,index)=>{
+                            var result = deletedEbooks.filter(function(v,i) {
+                                return v['EbookId'] === "96";//+current.BookId;
+                            });
+                            if(result.length > 0){
+                                RNFS.exists(current.downloadedFile).then(r=>{
+                                    if(r){
+                                        RNFS.unlink(current.downloadedFile)
+                                        .then(() => {
+                                            delete this.state.downloadedItem[index];
+                                        })
+                                        .catch((err) => {
+                                            console.log(err.message);
+                                        });
+                                    }
+                                })
+                                .catch(err=>{
+                                    console.log(err.message);
+                                });
+                            }
+                            if(index == (this.state.downloadedItem.length-1)){
+                                this.saveDetails('downloadedItem',JSON.stringify(this.state.downloadedItem));
+                            }
+                        })(currentD,k)
+                    }
+                }
                 for(var i= 0;i<booksList.length;i++){
                     var current = booksList[i];
                     var downloadFile = '';
@@ -384,8 +438,8 @@ class Allitems extends Component {
     }
     componentDidUpdate(prevProps, prevState) {
         // only update chart if the data has changed
-        console.log(prevState);
-      }      
+        //console.log(prevState);
+    }
     render() {
         const RemoveHiehgt = height - 112;
         return (

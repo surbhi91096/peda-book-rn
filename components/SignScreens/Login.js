@@ -53,7 +53,7 @@ export default class Login extends Component {
             },
             body: JSON.stringify(jsonArray)
         })
-        .then((res)=>res.json())
+        .then((res)=>{console.log(res);return res.json()})
         .then((response)=>{
             console.log(response);
             if(response.Status == 1){
